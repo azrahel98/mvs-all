@@ -213,12 +213,24 @@
 				>
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<a class="nav-link" href="./">
+							<RouterLink
+								:to="{
+									path: '/',
+								}"
+								class="nav-link"
+								tag="a"
+							>
 								<span class="nav-link-icon d-md-none d-lg-inline-block">
 									<home-icon class="icon" />
 								</span>
 								<span class="nav-link-title"> Home </span>
-							</a>
+							</RouterLink>
+							<!-- <a class="nav-link" href="./">
+								<span class="nav-link-icon d-md-none d-lg-inline-block">
+									<home-icon class="icon" />
+								</span>
+								<span class="nav-link-title"> Home </span>
+							</a> -->
 						</li>
 						<li class="nav-item dropdown">
 							<a

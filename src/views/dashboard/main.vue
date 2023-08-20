@@ -5,7 +5,7 @@
 				<div class="row g-2 align-items-center">
 					<div class="col">
 						<h2 class="page-title">Trabajadores</h2>
-						<div class="text-secondary mt-1">Activos y no Activos</div>
+						<div class="text-secondary mt-1">{{ Trabajadores.length }} encontrados</div>
 					</div>
 					<div class="col-auto ms-auto d-print-none">
 						<div class="d-flex">
@@ -13,6 +13,8 @@
 								type="search"
 								class="form-control d-inline-block w-9 me-3"
 								placeholder="Pepito Perez"
+								v-model="nombre"
+								@keyup.enter="buscar"
 							/>
 							<a class="btn btn-primary">
 								<plus-icon class="icon" />
@@ -26,7 +28,13 @@
 		<div class="page-body">
 			<div class="container-xl">
 				<div class="row row-cards align-content-center justify-content-center">
-					<card v-for="_x in 5"></card>
+					<card
+						v-for="x in Trabajadores"
+						:dni="(x as any).dni"
+						:name="(x as any).nombre"
+						:activo="x.activos"
+						:sexo="x.sexo"
+					/>
 				</div>
 			</div>
 		</div>
@@ -35,4 +43,29 @@
 
 <script lang="ts" setup>
 	import card from '@components/Empleados/card.vue'
+	import { httpService } from '@utils/api'
+	import { ref } from 'vue'
+	import { useToast } from 'vue-toastification'
+
+	const toast = useToast()
+
+	const nombre = ref('')
+
+	const Trabajadores = ref([] as Array<any>)
+
+	async function buscar() {
+		try {
+			if (nombre.value.trim().length == 0) throw (new Error().message = 'campo vacio')
+
+			const res = await httpService.post('/employ/search', {
+				nombre: nombre.value,
+			})
+			Trabajadores.value = res.data.trabajadores
+			if (Trabajadores.value.length == 0)
+				throw (new Error().message = 'no hay trabajadores')
+			toast.success('success')
+		} catch (error) {
+			toast.warning(String(error))
+		}
+	}
 </script>

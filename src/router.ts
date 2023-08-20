@@ -44,6 +44,16 @@ const routes: RouteRecordRaw[] = [
 				component: () => import('@views/dashboard/main.vue'),
 				name: 'main',
 			},
+			{
+				name: 'perfil',
+				path: '/trabajador/:dni',
+				component: () => import('@views/dashboard/perfil.vue'),
+			},
+			{
+				name: 'asistencia',
+				path: '/asistencia/:dni/:mes/:year',
+				component: () => import('@views/dashboard/asistencia.vue'),
+			},
 		],
 	},
 ]
