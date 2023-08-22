@@ -12,6 +12,7 @@ export async function buscarRegistros(
 			mes,
 			year,
 		})
+		console.log(data.data.documentos)
 		return data.data.documentos
 	} catch (error) {
 		console.log(error)

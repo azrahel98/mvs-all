@@ -1,5 +1,5 @@
 <template>
-	<div class="container-xl">
+	<div class="container-xl p-0 mt-0">
 		<div class="page-body d-print-none cal">
 			<div class="row row-cards align-center justify-content-center">
 				<div class="col-md-4 col-sm-4 col-lg-2 infocard">
@@ -51,43 +51,48 @@
 </script>
 
 <style lang="scss" scoped>
-	.infocard {
-		width: max-content;
-		.card {
-			padding: 1.5vh;
-			.card-body {
-				display: grid;
-				grid-template-rows: auto min-content;
-				row-gap: 2vh;
-				.name {
-					h3 {
-						display: flex;
-						flex-direction: column;
-						justify-content: center;
-						align-items: center;
-						a {
+	.page-body {
+		padding: 0;
+		margin: 0;
+		margin-top: 1vh;
+		.infocard {
+			width: max-content;
+			.card {
+				padding: 1.5vh;
+				.card-body {
+					display: grid;
+					grid-template-rows: auto min-content;
+					row-gap: 2vh;
+					.name {
+						h3 {
+							display: flex;
+							flex-direction: column;
+							justify-content: center;
+							align-items: center;
+							a {
+								text-align: center;
+								width: auto;
+								min-width: min-content;
+							}
+						}
+						.avatar {
+							justify-self: center;
 							text-align: center;
-							width: auto;
-							min-width: min-content;
+							padding: 0;
+							margin: 0;
+							--tblr-avatar-size: 3.2rem;
 						}
 					}
-					.avatar {
-						justify-self: center;
-						text-align: center;
-						padding: 0;
-						margin: 0;
-						--tblr-avatar-size: 3.2rem;
-					}
-				}
-				.info {
-					display: grid;
-					grid-template-rows: 1fr 1fr;
-					justify-content: center;
-					row-gap: 2vh;
-					font-weight: 500;
-					font-size: 0.7rem;
-					div {
-						max-width: 27vh;
+					.info {
+						display: grid;
+						grid-template-rows: 1fr 1fr;
+						justify-content: center;
+						row-gap: 2vh;
+						font-weight: 500;
+						font-size: 0.7rem;
+						div {
+							max-width: 27vh;
+						}
 					}
 				}
 			}

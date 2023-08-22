@@ -46,16 +46,18 @@
 				>
 					{{ AbrevAsuntos((r as any).asunto).abr }}
 				</div>
+				<!-- <ModalCal :doc="(r as Object)" /> -->
 			</div>
 			<div class="doc" v-if="prop.docs" v-for="r in prop.docs">
 				<div
 					class="badge opacity-70"
 					:class="AbrevAsuntos((r as any).asunto).class"
 					data-bs-toggle="modal"
-					:data-bs-target="`#d-${(r as any).det}`"
+					:data-bs-target="`#d-${(r as any).id}`"
 				>
 					{{ AbrevAsuntos((r as any).asunto).abr }}
 				</div>
+				<ModalCal :doc="(r as Object)" :id="(r as any).id" />
 			</div>
 		</div>
 		<div>
@@ -85,6 +87,7 @@
 	import { reactive } from 'vue'
 	import { AbrevAsuntos } from '@utils/abrv'
 	import { router } from '../../router'
+	import ModalCal from '@components/Asistencia/moda_info.vue'
 
 	import { calendarStore } from '@store/calendar'
 
