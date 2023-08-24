@@ -86,6 +86,7 @@
 				password: password.value,
 			})
 			message.code = 0
+
 			localStorage.setItem('token', response.data.token)
 			router.replace({ path: '/' })
 		} catch (error: any) {

@@ -203,7 +203,7 @@
 						<a href="#" class="dropdown-item">Feedback</a>
 						<div class="dropdown-divider"></div>
 						<a href="./settings.html" class="dropdown-item">Settings</a>
-						<a href="./sign-in.html" class="dropdown-item">Logout</a>
+						<a @click="logout" class="dropdown-item">Logout</a>
 					</div>
 				</div>
 			</div>
@@ -297,3 +297,12 @@
 		</div>
 	</header>
 </template>
+
+<script lang="ts" setup>
+	import { router } from '../router'
+
+	const logout = () => {
+		localStorage.clear()
+		router.go(0)
+	}
+</script>
