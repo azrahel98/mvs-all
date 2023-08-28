@@ -6,7 +6,7 @@
 			range!.length > 0 && docs ? `${AbrevAsuntos((range![0] as any).asunto).bg}`:'',
 			// store.asistencia.find((x) => moment(x.fecha).date() == prop.dia )?.falta ? 'bg-danger bg-gradient':'',
 			// store.asistencia.find((x) => moment(x.fecha).date() == prop.dia )?.tardanza ? 'bg-warning-lt bg-gradient':'',
-			registro ? '' : 'bg-warning-lt',
+			// registro ? '' : 'bg-warning-lt',
 		]"
 	>
 		<h2 class="text-dark">{{ prop.dia }}</h2>
@@ -42,11 +42,11 @@
 					class="badge"
 					data-bs-toggle="modal"
 					:class="AbrevAsuntos((r as any).asunto).class"
-					:data-bs-target="`#d-${(r as any).det}`"
+					:data-bs-target="`#d-${(r as any).id}`"
 				>
 					{{ AbrevAsuntos((r as any).asunto).abr }}
 				</div>
-				<!-- <ModalCal :doc="(r as Object)" /> -->
+				<ModalCal :doc="(r as Object)" :id="(r as any).id" />
 			</div>
 			<div class="doc" v-if="prop.docs" v-for="r in prop.docs">
 				<div

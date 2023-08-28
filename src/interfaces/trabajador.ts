@@ -14,6 +14,7 @@ interface Trabajador_Info {
 interface Contrato_Info {
 	dni: string
 	numero: string | undefined
+	activo: string | undefined
 	ingreso: string | undefined
 	sueldo: number | undefined
 	renuncia: string | undefined
@@ -36,7 +37,7 @@ interface Contrato_Info {
 
 interface BasicInfo {
 	dni: string
-	sexo: string | undefined
+	sexo: string
 	nombre: string
 	area: string
 	cargo: string

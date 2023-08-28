@@ -21,6 +21,11 @@ export const calendarStore = defineStore('calendarStore', {
 	}),
 	actions: {
 		async agregar(dni: string, mes: number, year: number) {
+			this.$state.regis = {
+				registros: [],
+				doc: [],
+				ranges: [],
+			} as unknown as Marcaciones
 			this.$state.regis = await buscarRegistros(dni, mes, year)
 			// this.$state.asistencia = await buscarAsistencia(dni, mes, year)
 			this.$state.asistencia = []

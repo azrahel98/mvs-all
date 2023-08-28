@@ -3,21 +3,39 @@
 		<div class="page-body d-print-none cal">
 			<div class="row row-cards align-center justify-content-center">
 				<div class="col-md-4 col-sm-4 col-lg-2 infocard">
-					<div class="card">
-						<div class="card-body p-1 text-center">
-							<div class="name">
-								<span class="avatar avatar-rounded">{{
-									formatAPAName(prop.nombre)
-								}}</span>
-								<h3 class="m-0 mb-1">
-									<a>{{ prop.nombre }}</a>
-									<span>{{ prop.dni }}</span>
-								</h3>
-							</div>
+					<div class="card p-4 text-center">
+						<div>
+							<img
+								src="../../assets/sexo/m.png"
+								class="avatar avatar-xl rounded mb-2"
+								v-if="sexo == 'M'"
+							/>
+							<img
+								src="../../assets/sexo/f.png"
+								class="avatar avatar-xl rounded mb-2"
+								v-else
+							/>
 
+							<h3 class="m-0 mb-1">
+								<RouterLink
+									:to="{
+										name: 'perfil',
+										params: {
+											dni: dni,
+										},
+									}"
+								>
+									{{ prop.nombre }}
+								</RouterLink>
+							</h3>
+							<div class="text-secondary">{{ prop.dni }}</div>
 							<div class="info">
-								<div class="text-muted"><checkbox-icon /> {{ prop.area }}</div>
-								<div class="text-muted"><checkup-list-icon /> {{ prop.cargo }}</div>
+								<div class="text-muted fs-6 fw-bold">
+									<checkbox-icon class="icon" /> {{ area }}
+								</div>
+								<div class="text-muted fs-6 fw-bold">
+									<checkup-list-icon class="icon" /> {{ cargo }}
+								</div>
 							</div>
 						</div>
 					</div>
@@ -33,21 +51,8 @@
 		dni: { type: String, required: true },
 		area: { type: String, required: true },
 		cargo: { type: String, required: true },
+		sexo: { type: String },
 	})
-
-	function formatAPAName(fullName: string): string {
-		var nameArray = fullName.split(' ')
-		var firstInitial = nameArray[0].charAt(0).toUpperCase()
-		var middleInitial = ''
-
-		if (nameArray.length > 2) {
-			middleInitial = nameArray[1].charAt(0).toUpperCase()
-		}
-
-		var apaName = firstInitial + middleInitial
-
-		return apaName
-	}
 </script>
 
 <style lang="scss" scoped>
@@ -88,8 +93,7 @@
 						grid-template-rows: 1fr 1fr;
 						justify-content: center;
 						row-gap: 2vh;
-						font-weight: 500;
-						font-size: 0.7rem;
+
 						div {
 							max-width: 27vh;
 						}

@@ -16,9 +16,6 @@
 						<div class="card-body">
 							<h3 class="card-title" data-bs-dismiss="modal">
 								{{ (prop.doc as any).asunto }} -{{ (prop.doc as any).doc }}
-								<!-- <RouterLink :to="{name:'doc_search',params:{id:(prop.doc as any).doc}}">{{
-									(prop.doc as any).doc
-								}}</RouterLink> -->
 							</h3>
 							<p class="text-muted">
 								{{ (prop.doc as any).descripcion }}
