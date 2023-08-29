@@ -22,7 +22,7 @@
 				</h3>
 				<div class="text-secondary">{{ prop.dni }}</div>
 				<div class="mt-3">
-					<span class="badge bg-green" v-if="activo">Activo</span>
+					<span class="badge bg-green text-white" v-if="activo">Activo</span>
 				</div>
 			</div>
 		</div>

@@ -39,25 +39,25 @@
 		<div class="docs" v-if="docs?.length != 0 || range?.length != 0">
 			<div class="ranges" v-if="prop.range" v-for="r in prop.range">
 				<div
-					class="badge"
+					class="badge text-white"
 					data-bs-toggle="modal"
 					:class="AbrevAsuntos((r as any).asunto).class"
 					:data-bs-target="`#d-${(r as any).id}`"
 				>
 					{{ AbrevAsuntos((r as any).asunto).abr }}
 				</div>
-				<ModalCal :doc="(r as Object)" :id="(r as any).id" />
+				<ModalCal :doc="(r as Object)" :id="(r as any).id" :ranged="true" />
 			</div>
 			<div class="doc" v-if="prop.docs" v-for="r in prop.docs">
 				<div
-					class="badge opacity-70"
+					class="badge text-white"
 					:class="AbrevAsuntos((r as any).asunto).class"
 					data-bs-toggle="modal"
 					:data-bs-target="`#d-${(r as any).id}`"
 				>
 					{{ AbrevAsuntos((r as any).asunto).abr }}
 				</div>
-				<ModalCal :doc="(r as Object)" :id="(r as any).id" />
+				<ModalCal :doc="(r as Object)" :id="(r as any).id" :ranged="false" />
 			</div>
 		</div>
 		<div>
@@ -76,7 +76,6 @@
 					@change="changed"
 					v-model="asitencia.tardanza"
 					:class="[asitencia.saved ? 'is-valid' : '']"
-					@keyup.enter="save"
 				/>
 			</div>
 		</div>
@@ -89,16 +88,12 @@
 	import { router } from '../../router'
 	import ModalCal from '@components/Asistencia/moda_info.vue'
 
-	import { calendarStore } from '@store/calendar'
-
 	const prop = defineProps({
 		dia: { type: Number, required: true },
 		registro: { type: Object },
 		docs: { type: Array },
 		range: { type: Array },
 	})
-
-	const store = calendarStore()
 
 	const params = router.currentRoute.value.params as any
 
@@ -114,11 +109,6 @@
 			asitencia.tardanza = null
 			return
 		}
-	}
-
-	const save = () => {
-		asitencia.saved = store.addDayInfo(asitencia)
-		store.saved = false
 	}
 </script>
 <style lang="scss" scoped>

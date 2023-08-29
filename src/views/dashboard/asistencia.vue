@@ -118,7 +118,7 @@
 			isLoading.value = true
 			var infores = await httpService.get(`/employ/info/${dni.dni}`)
 			employ.value = infores.data.result
-			calstore.agregar(dni.dni, parseInt(dni.mes), parseInt(dni.year))
+			await calstore.agregar(dni.dni, parseInt(dni.mes), parseInt(dni.year))
 			isLoading.value = false
 		} catch (error) {
 			console.log(error)
@@ -132,7 +132,8 @@
 	watch(dateInfo.value, async (r, _x) => {
 		try {
 			isLoading.value = true
-			calstore.agregar(dni.dni, r.mes, parseInt(r.year))
+			console.log('algo paso', isLoading.value)
+			await calstore.agregar(dni.dni, r.mes, parseInt(r.year))
 			await router.replace({
 				params: { dni: dni.dni, mes: parseInt(r.mes), year: r.year },
 			})

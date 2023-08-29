@@ -10,9 +10,7 @@
 			<div class="modal-content">
 				<div class="modal-body">
 					<div class="card">
-						<div class="ribbon ribbon-top bg-yellow">
-							<checkbox-icon />
-						</div>
+						<div class="ribbon ribbon-top bg-bitbucket-lt"></div>
 						<div class="card-body">
 							<h3 class="card-title" data-bs-dismiss="modal">
 								{{ (prop.doc as any).asunto }} -{{ (prop.doc as any).doc }}
@@ -32,16 +30,49 @@
 						</div>
 					</div>
 				</div>
+				<div class="modal-footer d-flex justify-content-between">
+					<button
+						type="button"
+						class="btn btn-sm"
+						@click="eliminar"
+						data-bs-dismiss="modal"
+					>
+						<trash-icon class="text-danger" />
+					</button>
+					<button type="button" class="btn btn-sm" data-bs-dismiss="modal">
+						<x-icon class="text-danger" />
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script lang="ts" setup>
+	import { calendarStore } from '@store/calendar'
+	import { httpService } from '@utils/api'
+	import { useToast } from 'vue-toastification'
+
 	const prop = defineProps({
 		doc: { type: Object, required: true },
 		id: { type: Number, required: true },
+		ranged: { type: Boolean },
 	})
+
+	const toast = useToast()
+	const calStore = calendarStore()
+
+	const eliminar = async () => {
+		try {
+			await httpService.post('/doc/delete', {
+				id: prop.id,
+			})
+			calStore.borrar(prop.ranged, prop.id)
+			toast.success('Eliminado')
+		} catch (error) {
+			console.log('error')
+		}
+	}
 </script>
 
 <style lang="scss" scoped>

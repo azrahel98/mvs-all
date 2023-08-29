@@ -8,8 +8,8 @@
 		aria-labelledby="staticBackdropLabel"
 		aria-hidden="true"
 	>
-		<div class="modal-dialog">
-			<div class="modal-content">
+		<div class="modal-dialog modal-dialog-scrollable">
+			<form autocomplete="off" @submit.prevent="add" class="modal-content">
 				<div class="modal-header">
 					<button
 						type="button"
@@ -18,21 +18,37 @@
 						aria-label="Close"
 					></button>
 				</div>
-				<form class="modal-body" autocomplete="off">
+				<div class="modal-body">
 					<fieldset class="form-fieldset d-flex gap-1">
+						<div class="ribbon ribbon-top bg-success" v-if="isshared">
+							<!-- <checkbox-icon /> -->
+							{{ doc.code }}
+						</div>
 						<div class="mb-1">
 							<label class="form-label required">N° Documento</label>
-							<input type="text" class="form-control" v-model="doc.nombre" required />
+							<input
+								type="text"
+								class="form-control"
+								v-model="doc.nombre"
+								required
+								:disabled="isshared"
+							/>
 						</div>
 						<div class="mb-1">
 							<label class="form-label required">Fecha</label>
-							<input type="date" class="form-control" v-model="doc.fecha" />
+							<input
+								type="date"
+								class="form-control"
+								v-model="doc.fecha"
+								:disabled="isshared"
+							/>
 						</div>
 						<div class="mb-1">
 							<label class="form-label">Tipo Doc</label>
 							<select
 								class="form-select tomselected ts-hidden-accessible"
 								v-model="doc.tipo"
+								:disabled="isshared"
 							>
 								<option value="1">DOC-ADM</option>
 								<option value="2">MEMORANDO</option>
@@ -52,7 +68,8 @@
 								<div
 									class="d-flex gap-2 align-items-center justify-content-center flex-wrap"
 								>
-									<div class="input-group-sm text-center">
+									<div class="mb-1">
+										<label class="form-label">Asunto</label>
 										<select
 											class="form-select tomselected ts-hidden-accessible"
 											v-model="det.asunto"
@@ -70,8 +87,8 @@
 											<option value="OTROS">OTROS</option>
 										</select>
 									</div>
-
-									<div class="input-group-sm">
+									<div class="mb-1">
+										<label class="form-label">Referencia</label>
 										<input type="text" class="form-control" v-model="det.referencia" />
 									</div>
 								</div>
@@ -98,38 +115,82 @@
 										:class="isrange ? '' : 'd-none'"
 										v-model="valrange"
 									/>
-									<textarea
-										class="mt-2 form-control"
-										v-model="det.descripcion"
-									></textarea>
+									<textarea class="mt-2 form-control" v-model="det.descripcion" />
 								</div>
 							</div>
 						</div>
 					</div>
-				</form>
-				<div>
-					<ul>
-						<li v-for="x in detalle">{{ x }}</li>
-					</ul>
+					<div class="row gap-2 justify-content-center mt-3">
+						<div
+							class="col-md-5 col-lg-5 col-sm-5 col-xxl-5 m-0 gap-0"
+							v-for="(x, i) in detalle"
+						>
+							<div class="card card-stacked">
+								<div class="card-body">
+									<h3 class="card-title">
+										{{ (x as any).asunto }}
+										<circle-minus-icon
+											@click="borrar_item(i)"
+											class="icon icon-sm text-center text-danger pointer-event"
+										/>
+									</h3>
+									<div class="card-body p-0 m-0">
+										<span class="tag">
+											<id-badge-icon class="icon" /> {{ (x as any).dni }}
+										</span>
+										<span class="tag" v-if="(x as any).fecha !== 'NULL'">
+											<calendar-due-icon class="icon" />{{ (x as any).fecha }}
+										</span>
+										<span class="tag" v-if="(x as any).inicio !== 'NULL'">
+											<calendar-pin-icon class="icon" />{{ (x as any).inicio }}
+										</span>
+										<span class="tag" v-if="(x as any).fin !== 'NULL'">
+											<calendar-pin-icon class="icon" />{{ (x as any).fin }}
+										</span>
+										<span
+											class="tag"
+											v-if="((x as any).descripcion as string).trim() != ''"
+										>
+											<paperclip-icon class="icon" />{{ (x as any).descripcion }}
+										</span>
+										<span
+											class="tag"
+											v-if="((x as any).referencia as string).trim() != ''"
+										>
+											<paperclip-icon class="icon" />{{ (x as any).referencia }}
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
+
 				<div class="modal-footer">
-					<button type="button" class="btn btn-sm" data-bs-dismiss="modal">
+					<button type="button" class="btn btn-sm" @click="salir" data-bs-dismiss="modal">
 						<x-icon class="text-danger" />
 					</button>
-					<button class="btn btn-sm" type="button" @click="add">
+					<button class="btn btn-sm" type="submit">
 						<plus-icon class="text-primary" />
 					</button>
-					<button class="btn btn-sm" @click="guardar">
+					<button
+						class="btn btn-sm btn-outline-azure"
+						v-if="detalle.length > 0"
+						type="button"
+						@click="guardar"
+					>
 						<device-mobile-search-icon class="text-primary" />
 					</button>
-					<button class="btn btn-sm" @click="buscar">
+					<button
+						class="btn btn-sm"
+						type="button"
+						v-if="detalle.length == 0"
+						@click="buscar"
+					>
 						<search-icon class="text-success" />
 					</button>
-					<button class="btn btn-sm">
-						<trash-x-icon class="text-danger" />
-					</button>
 				</div>
-			</div>
+			</form>
 		</div>
 	</div>
 </template>
@@ -140,9 +201,13 @@
 	import { reactive, ref } from 'vue'
 	import { httpService } from '@utils/api'
 	import { useToast } from 'vue-toastification'
+	import { userStore } from '@store/user'
+
+	const ustore = userStore()
 
 	const isrange = ref(false)
 	const valrange = ref()
+	const isshared = ref(false)
 
 	const toast = useToast()
 
@@ -201,7 +266,26 @@
 			doc.tipo = docsx.data.documento.tipo
 			doc.fecha = docsx.data.documento.fecha
 			doc.code = docsx.data.documento.docid
-		} catch (error) {}
+			isshared.value = true
+		} catch (error) {
+			doc.nombre = ''
+			toast.error('El Documento no Existe')
+			isshared.value = false
+		}
+	}
+
+	const borrar_item = (i: number) => {
+		delete detalle.value[i]
+		detalle.value = detalle.value.filter((e) => e !== undefined)
+	}
+
+	const salir = () => {
+		isshared.value = false
+		doc.nombre = ''
+		doc.tipo = 1
+		doc.fecha = moment().format('YYYY-MM-DD').toString()
+		doc.code = 0
+		detalle.value = []
 	}
 
 	const guardar = async () => {
@@ -210,6 +294,7 @@
 				fecha: doc.fecha,
 				nombre: doc.nombre,
 				tipo: parseInt(doc.tipo.toString()),
+				user: parseInt(ustore.user.toString()),
 			})
 			doc.code = docres.data
 
@@ -223,6 +308,7 @@
 					referencia: d.referencia.trim() == '' ? null : d.referencia,
 					inicio: d.inicio == 'NULL' ? null : d.inicio,
 					fin: d.fin == 'NULL' ? null : d.fin,
+					user: parseInt(ustore.user.toString()),
 				})
 			})
 

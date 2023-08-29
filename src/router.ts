@@ -1,3 +1,4 @@
+import { userStore } from '@store/user'
 import { decodeToken } from 'jsontokens'
 import {
 	NavigationGuardNext,
@@ -6,7 +7,7 @@ import {
 	createWebHistory,
 } from 'vue-router'
 
-function decodeTokena(next: NavigationGuardNext) {
+async function decodeTokena(next: NavigationGuardNext) {
 	try {
 		const token = localStorage.getItem('token')
 		if (token === null) {
@@ -18,6 +19,8 @@ function decodeTokena(next: NavigationGuardNext) {
 			localStorage.removeItem('token')
 			return next({ name: 'login' })
 		}
+		const usStore = userStore()
+		await usStore.agregar()
 		return next()
 	} catch (error) {
 		return next({ name: 'login' })
