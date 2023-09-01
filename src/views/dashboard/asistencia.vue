@@ -73,7 +73,7 @@
 										:dia="x"
 										:registro="calstore.regis.registros.find((e:any) => moment(e.fecha).date() == x)"
 										:docs="calstore.regis.doc.filter((e:any) => moment(e.fecha).date() == x )"
-										:range="calstore.regis?.ranges.filter((e:any) => moment(`${dateInfo.year}-${dateInfo.mes}-${x}`).isBetween(moment(e.inicio),moment(e.fin),null,'[]') )"
+										:range="calstore.regis?.ranges.filter((e:any) => moment(`${dateInfo.year}-${dateInfo.mes}-${x}`,'yyyy-mm-dd').isBetween(moment(e.inicio),moment(e.fin),null,'[]') )"
 									/>
 								</div>
 							</div>

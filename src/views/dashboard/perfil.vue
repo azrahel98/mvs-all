@@ -22,7 +22,7 @@
 									name: 'asistencia',
 									params: {
 										dni: user?.dni,
-										mes: 2,
+										mes: `${new Date().getMonth() + 1}`,
 										year: 2023,
 									},
 								}"

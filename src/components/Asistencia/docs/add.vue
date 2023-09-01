@@ -149,15 +149,12 @@
 										</span>
 										<span
 											class="tag"
-											v-if="((x as any).descripcion as string).trim() != ''"
-										>
-											<paperclip-icon class="icon" />{{ (x as any).descripcion }}
-										</span>
-										<span
-											class="tag"
 											v-if="((x as any).referencia as string).trim() != ''"
 										>
 											<paperclip-icon class="icon" />{{ (x as any).referencia }}
+										</span>
+										<span v-if="((x as any).descripcion as string).trim() != ''">
+											{{ (x as any).descripcion }}
 										</span>
 									</div>
 								</div>
@@ -202,8 +199,10 @@
 	import { httpService } from '@utils/api'
 	import { useToast } from 'vue-toastification'
 	import { userStore } from '@store/user'
+	import { calendarStore } from '@store/calendar'
 
 	const ustore = userStore()
+	const calstore = calendarStore()
 
 	const isrange = ref(false)
 	const valrange = ref()
@@ -311,6 +310,11 @@
 					user: parseInt(ustore.user.toString()),
 				})
 			})
+			calstore.agregar(
+				(router.currentRoute.value.params as any).dni,
+				(router.currentRoute.value.params as any).mes,
+				(router.currentRoute.value.params as any).year
+			)
 
 			toast.success(`se ah guardado ${doc.code}`)
 		} catch (error) {

@@ -13,7 +13,9 @@
 						<div class="ribbon ribbon-top bg-bitbucket-lt"></div>
 						<div class="card-body">
 							<h3 class="card-title" data-bs-dismiss="modal">
-								{{ (prop.doc as any).asunto }} -{{ (prop.doc as any).doc }}
+								{{ (prop.doc as any).asunto }} -{{ (prop.doc as any).nombre }}-{{
+									(prop.doc as any).doc
+								}}
 							</h3>
 							<p class="text-muted">
 								{{ (prop.doc as any).descripcion }}
@@ -31,13 +33,16 @@
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-between">
+					<button type="button" class="btn btn-sm" @click="eliminar">
+						<trash-icon class="text-danger" />
+					</button>
 					<button
 						type="button"
-						class="btn btn-sm"
-						@click="eliminar"
+						class="btn btn-sm bg-warning-lt"
 						data-bs-dismiss="modal"
+						@click="anular"
 					>
-						<trash-icon class="text-danger" />
+						<circle-dot-icon class="text-warning" />
 					</button>
 					<button type="button" class="btn btn-sm" data-bs-dismiss="modal">
 						<x-icon class="text-danger" />
@@ -64,11 +69,29 @@
 
 	const eliminar = async () => {
 		try {
-			await httpService.post('/doc/delete', {
-				id: prop.id,
-			})
-			calStore.borrar(prop.ranged, prop.id)
-			toast.success('Eliminado')
+			var sure = confirm('Estas seguro ?')
+			if (sure) {
+				await httpService.post('/doc/delete', {
+					id: prop.id,
+				})
+				calStore.borrar(prop.ranged, prop.id)
+				toast.success('Eliminado')
+			}
+		} catch (error) {
+			console.log('error')
+		}
+	}
+	const anular = async () => {
+		try {
+			var sure = confirm('Estas seguro ?')
+			if (sure) {
+				await httpService.post('/doc/anulardoc', {
+					id: prop.id,
+					valor: false,
+				})
+				calStore.borrar(prop.ranged, prop.id)
+				toast.warning('Actualizado')
+			}
 		} catch (error) {
 			console.log('error')
 		}

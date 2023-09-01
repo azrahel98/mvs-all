@@ -27,7 +27,6 @@ export const calendarStore = defineStore('calendarStore', {
 				ranges: [],
 			} as unknown as Marcaciones
 			this.$state.regis = await buscarRegistros(dni, mes, year)
-			// this.$state.asistencia = await buscarAsistencia(dni, mes, year)
 			this.$state.asistencia = []
 		},
 		borrar(ranged: boolean, id: number) {

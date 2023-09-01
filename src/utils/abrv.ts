@@ -33,8 +33,8 @@ export function AbrevAsuntos(asunto: string) {
 		case 'LICENCIA':
 			return {
 				abr: 'LC',
-				class: 'bg-dribbble-lt',
-				bg: '',
+				class: 'bg-vimeo',
+				bg: 'bg-vimeo-lt',
 			}
 		case 'SANSION':
 			return {
@@ -57,13 +57,13 @@ export function AbrevAsuntos(asunto: string) {
 		case 'DM':
 			return {
 				abr: 'DM',
-				class: 'bg-dribbble',
-				bg: 'bg-dribbble-lt',
+				class: 'bg-dribbble border-purple',
+				bg: 'bg-dribbble',
 			}
 		default:
 			return {
 				abr: 'OT',
-				class: 'bg-dribbbble-lt',
+				class: 'bg-twitter',
 				bg: '',
 			}
 	}
