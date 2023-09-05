@@ -312,8 +312,8 @@
 			})
 			calstore.agregar(
 				(router.currentRoute.value.params as any).dni,
-				(router.currentRoute.value.params as any).mes,
-				(router.currentRoute.value.params as any).year
+				parseInt((router.currentRoute.value.params as any).mes),
+				parseInt((router.currentRoute.value.params as any).year)
 			)
 
 			toast.success(`se ah guardado ${doc.code}`)

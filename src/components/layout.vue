@@ -40,7 +40,12 @@
 						data-bs-toggle="dropdown"
 						aria-label="Open user menu"
 					>
-						<span class="avatar avatar-sm"></span>
+						<span
+							class="avatar avatar-sm"
+							style="
+								background-image: url('https://lh3.googleusercontent.com/a/AAcHTtfqziLv-IICRktVv_ceR9wduZHlHAMDRfKJo5FCodlKrKM=s288-c-no');
+							"
+						></span>
 						<div class="d-none d-xl-block ps-2">
 							<div>Raul Chercca</div>
 							<div class="mt-1 small text-muted">Admin</div>

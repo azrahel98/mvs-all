@@ -9,7 +9,7 @@
 				:sexo="employ.sexo!"
 			/>
 			<div class="c-flex">
-				<div class="main card col-lg-6 col-xl-6 col-xxl-6 col-md-8 col-sm-12">
+				<div class="main card col-lg-6 col-xl-6 col-xxl-4 col-md-8 col-sm-12">
 					<div class="calendar-tools">
 						<div class="d-flex flex-column flex-lg-row">
 							<div class="d-flex align-content-center justify-content-center">
@@ -31,13 +31,20 @@
 								>{{ getMonthName(dateInfo.mes) }} {{ dateInfo.year }}</span
 							>
 						</div>
-						<div class="d-flex justify-content-between bt gap-4">
+						<div class="d-flex justify-content-between bt gap-4" v-if="ustore.level == 3">
 							<button
-								class="btn btn-ghost-info btn-icon w-100"
+								class="btn btn-ghost-facebook btn-icon w-100"
 								data-bs-toggle="modal"
 								data-bs-target="#staticBackdrop"
 							>
-								<browser-plus-icon />
+								<browser-plus-icon class="icon" />
+							</button>
+							<button
+								class="btn btn-icon btn-ghost-danger w-100"
+								v-if="calstore.saved"
+								@click="upload"
+							>
+								<cloud-upload-icon class="icon" />
 							</button>
 							<addCard />
 						</div>
@@ -69,11 +76,11 @@
 									).daysInMonth()"
 								>
 									<CardDia
-										:class="[isLoading ? 'loading-skeleton' : '']"
+										v-if="!isLoading"
 										:dia="x"
 										:registro="calstore.regis.registros.find((e:any) => moment(e.fecha).date() == x)"
 										:docs="calstore.regis.doc.filter((e:any) => moment(e.fecha).date() == x )"
-										:range="calstore.regis?.ranges.filter((e:any) => moment(`${dateInfo.year}-${dateInfo.mes}-${x}`,'yyyy-mm-dd').isBetween(moment(e.inicio),moment(e.fin),null,'[]') )"
+										:range="calstore.regis?.ranges.filter((e:any) => moment(`${dateInfo.year}-${dateInfo.mes}-${x}`,'yyyy-mm-dd').isBetween(moment(e.inicio,'yyyy-mm-dd'),moment(e.fin,'yyyy-mm-dd'),null,'[]') )"
 									/>
 								</div>
 							</div>
@@ -90,16 +97,19 @@
 	import { httpService } from '@utils/api'
 	import { getMonthName } from '@utils/abrv'
 	import { router } from '../../router'
-	import { onMounted, onUnmounted, ref, watch } from 'vue'
+	import { onBeforeMount, onUnmounted, ref, watch } from 'vue'
 	import moment from 'moment'
 	import CardInfo from '@components/Asistencia/trabajador.vue'
 	import { calendarStore } from '@store/calendar'
+	import { userStore } from '@store/user'
 	import CardDia from '@components/Asistencia/dia.vue'
 	import addCard from '@components/Asistencia/docs/add.vue'
+	import { onBeforeRouteLeave } from 'vue-router'
 
 	const isLoading = ref(false)
 	const dni = router.currentRoute.value.params as any
 	const calstore = calendarStore()
+	const ustore = userStore()
 
 	const employ = ref<BasicInfo>({
 		dni: '5465',
@@ -113,7 +123,7 @@
 		year: <number>parseInt(dni.year),
 	})
 
-	onMounted(async () => {
+	onBeforeMount(async () => {
 		try {
 			isLoading.value = true
 			var infores = await httpService.get(`/employ/info/${dni.dni}`)
@@ -132,7 +142,7 @@
 	watch(dateInfo.value, async (r, _x) => {
 		try {
 			isLoading.value = true
-			console.log('algo paso', isLoading.value)
+
 			await calstore.agregar(dni.dni, r.mes, parseInt(r.year))
 			await router.replace({
 				params: { dni: dni.dni, mes: parseInt(r.mes), year: r.year },
@@ -145,7 +155,7 @@
 	})
 
 	const siguiente = () => {
-		if (!calstore.saved) {
+		if (calstore.saved) {
 			let data = confirm('Estas seguro de salir sin guardar')
 			if (data) {
 				calstore.$reset()
@@ -167,7 +177,7 @@
 	}
 
 	const anterior = () => {
-		if (!calstore.saved) {
+		if (calstore.saved) {
 			let data = confirm('Estas seguro de salir sin guardar')
 			if (data) {
 				calstore.$reset()
@@ -185,6 +195,33 @@
 			} else {
 				dateInfo.value.mes = dateInfo.value.mes - 1
 			}
+		}
+	}
+	onBeforeRouteLeave((_to, _from, next) => {
+		if (calstore.saved) {
+			const confirmacion = window.confirm(
+				'¿Estás seguro de que quieres abandonar esta página?'
+			)
+			if (confirmacion) {
+				next()
+			} else {
+				next(false)
+			}
+		}
+		next()
+	})
+
+	const upload = async () => {
+		try {
+			await httpService.post('/asistencia/agregar', {
+				dni: dni.dni,
+				mes: parseInt(dni.mes),
+				year: parseInt(dni.year),
+				registros: calstore.getListUploat,
+			})
+			calstore.saved = false
+		} catch (error) {
+			console.log(error)
 		}
 	}
 </script>

@@ -63,7 +63,7 @@ export function AbrevAsuntos(asunto: string) {
 		default:
 			return {
 				abr: 'OT',
-				class: 'bg-twitter',
+				class: 'bg-dribbble-lt',
 				bg: '',
 			}
 	}

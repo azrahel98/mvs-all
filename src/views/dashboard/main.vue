@@ -18,10 +18,10 @@
 								v-model="nombre"
 								@keyup.enter="buscar"
 							/>
-							<a class="btn btn-primary">
+							<!-- <a class="btn btn-primary">
 								<plus-icon class="icon" />
 								Trabajador
-							</a>
+							</a> -->
 						</div>
 					</div>
 				</div>
@@ -38,7 +38,11 @@
 						:activo="x.activos"
 						:sexo="x.sexo"
 					/>
-					<LoadingVue v-else />
+					<Vue3Lottie
+						v-else
+						:animationLink="`https://lottie.host/bba86c56-2f45-4a2e-a2b0-9c78eb2b6a06/UbZPhGekDE.json`"
+						class="lottie"
+					/>
 				</div>
 			</div>
 		</div>
@@ -49,8 +53,7 @@
 	import card from '@components/Empleados/card.vue'
 	import { httpService } from '@utils/api'
 	import { ref } from 'vue'
-	import LoadingVue from '@components/loading.vue'
-	import { useToast } from 'vue-toastification'
+	import { TYPE, useToast } from 'vue-toastification'
 
 	const toast = useToast()
 
@@ -70,7 +73,45 @@
 				throw (new Error().message = 'no hay trabajadores')
 			loading.value = true
 		} catch (error) {
-			toast.warning(String(error))
+			toast(String(error), {
+				bodyClassName: 'alert p-0 m-0 text-white',
+				icon: false,
+				type: TYPE.INFO,
+			})
 		}
 	}
 </script>
+
+<style lang="scss">
+	.lottie {
+		height: 50vh;
+	}
+
+	// .Vue-Toastification__container {
+	// 	.Vue-Toastification__toast {
+	// 		padding: 0;
+	// 		margin: 0;
+	// 		padding-left: 1vh;
+	// 		padding-right: 1vh;
+	// 		// background-color: var(--tblr-info);
+	// 		svg {
+	// 			width: 0;
+	// 			margin: 0;
+	// 			padding: 0;
+	// 			display: none;
+	// 		}
+	// 		.Vue-Toastification__toast-body {
+	// 			margin: 0;
+	// 			display: flex;
+	// 			justify-content: center;
+	// 			align-items: center;
+	// 			align-content: center;
+	// 			font-weight: 500;
+	// 			font-size: 0.8em;
+	// 			background-color: transparent;
+	// 			box-shadow: none;
+	// 			border: none;
+	// 		}
+	// 	}
+	// }
+</style>
