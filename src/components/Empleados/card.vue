@@ -1,7 +1,7 @@
 <template>
-	<div class="col-md-6 col-lg-3">
+	<div class="col-md-4 col-lg-3 col-xl-3 col-xxl-3 col-sm-6">
 		<div class="card">
-			<div class="card-body p-4 text-center">
+			<div class="card-body p-2 text-center">
 				<img
 					src="../../assets/sexo/f.png"
 					class="avatar avatar-xl rounded mb-2"

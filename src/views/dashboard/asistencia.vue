@@ -8,11 +8,11 @@
 				:dni="employ.dni!"
 				:sexo="employ.sexo!"
 			/>
-			<div class="c-flex">
-				<div class="main card col-lg-6 col-xl-6 col-xxl-4 col-md-8 col-sm-12">
+			<div class="c-flex dia" v-if="!isLoading">
+				<div class="main card col-lg-6 col-xl-6 col-xxl-5 col-md-8 col-sm-12">
 					<div class="calendar-tools">
 						<div class="d-flex flex-column flex-lg-row">
-							<div class="d-flex align-content-center justify-content-center">
+							<div class="d-flex align-content-center justify-content-center flechas">
 								<button
 									class="btn btn-link text-dark ripple-surface-dark btn-icon"
 									style="min-width: 55.5px"
@@ -31,25 +31,28 @@
 								>{{ getMonthName(dateInfo.mes) }} {{ dateInfo.year }}</span
 							>
 						</div>
-						<div class="d-flex justify-content-between bt gap-4" v-if="ustore.level == 3">
+						<div
+							class="d-flex justify-content-center align-self-center align-items-center gap-2 action-us"
+							v-if="ustore.level == 1"
+						>
 							<button
-								class="btn btn-ghost-facebook btn-icon w-100"
+								class="btn btn-md btn-pill btn-ghost-facebook"
 								data-bs-toggle="modal"
 								data-bs-target="#staticBackdrop"
 							>
-								<browser-plus-icon class="icon" />
+								<browser-plus-icon class="icon text-center align-self-center m-0" />
 							</button>
 							<button
-								class="btn btn-icon btn-ghost-danger w-100"
+								class="btn btn-md btn-pill btn-ghost-warning"
 								v-if="calstore.saved"
 								@click="upload"
 							>
-								<cloud-upload-icon class="icon" />
+								<cloud-upload-icon class="icon text-center align-self-center m-0" />
 							</button>
 							<addCard />
 						</div>
 					</div>
-					<div class="calendario">
+					<div class="calendario" v-if="!isLoading">
 						<div class="card xd">
 							<div class="semana">
 								<div class="card">L</div>
@@ -76,7 +79,6 @@
 									).daysInMonth()"
 								>
 									<CardDia
-										v-if="!isLoading"
 										:dia="x"
 										:registro="calstore.regis.registros.find((e:any) => moment(e.fecha).date() == x)"
 										:docs="calstore.regis.doc.filter((e:any) => moment(e.fecha).date() == x )"
@@ -86,6 +88,38 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="imprimir">
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">ASUNTO</th>
+								<th scope="col">DESCRIPCION</th>
+								<th scope="col">FECHA</th>
+								<th scope="col">REFERENCIA</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="(x, y) in calstore.regis.doc">
+								<th scope="row">{{ y + 1 }}</th>
+								<td>{{ x.asunto }}</td>
+								<td>{{ x.descripcion }}</td>
+								<td>{{ x.fecha }}</td>
+								<td>{{ x.referencia }}</td>
+							</tr>
+							<tr
+								v-if="calstore.regis.ranges.length > 0"
+								v-for="x in calstore.regis.ranges"
+							>
+								<th scope="row">0</th>
+								<td>{{ x.asunto }}</td>
+								<td>{{ x.descripcion }}</td>
+								<td>{{ x.inicio }} - {{ x.fin }}</td>
+								<td>{{ x.referencia }}</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
@@ -128,6 +162,7 @@
 			isLoading.value = true
 			var infores = await httpService.get(`/employ/info/${dni.dni}`)
 			employ.value = infores.data.result
+			document.title = `${employ.value.nombre} - ${dni.mes}/${dni.year}`
 			await calstore.agregar(dni.dni, parseInt(dni.mes), parseInt(dni.year))
 			isLoading.value = false
 		} catch (error) {
@@ -137,6 +172,7 @@
 
 	onUnmounted(() => {
 		calstore.$reset()
+		document.title = 'Control de Asistencia'
 	})
 
 	watch(dateInfo.value, async (r, _x) => {
@@ -215,8 +251,8 @@
 		try {
 			await httpService.post('/asistencia/agregar', {
 				dni: dni.dni,
-				mes: parseInt(dni.mes),
-				year: parseInt(dni.year),
+				mes: dateInfo.value.mes,
+				year: dateInfo.value.year,
 				registros: calstore.getListUploat,
 			})
 			calstore.saved = false
@@ -227,6 +263,9 @@
 </script>
 
 <style lang="scss" scoped>
+	.imprimir {
+		display: none;
+	}
 	.page-wrapper {
 		.page-body {
 			margin: 0;
@@ -262,12 +301,13 @@
 				}
 
 				.calendario {
-					background-color: white !important;
 					border-color: white !important;
 					border: none;
 					border-radius: 1vh;
 					display: grid;
-
+					justify-self: center;
+					align-self: center;
+					width: 100%;
 					.xd {
 						border-bottom: 0;
 						border-left: 0;
@@ -303,6 +343,8 @@
 	.c-flex {
 		display: flex;
 		justify-content: center;
+		flex-direction: column;
+		align-items: center;
 		gap: 1vh;
 		flex-wrap: wrap;
 		.docs {
@@ -314,17 +356,47 @@
 		}
 	}
 
-	.loading-skeleton {
-		background-color: red;
-		animation: loading 1s infinite alternate;
-	}
-
-	@keyframes loading {
+	@keyframes cambiaColor {
 		0% {
-			background-color: #ddd;
+			opacity: 0;
 		}
 		100% {
-			background-color: white;
+			opacity: 1;
+		}
+	}
+	@media print {
+		.imprimir {
+			display: block;
+		}
+		.main {
+			width: 100%;
+			.calendar-tools {
+				justify-content: center !important;
+				.flechas {
+					display: none !important;
+				}
+				.calendar-heading {
+					justify-content: center;
+					align-items: center;
+					justify-items: center;
+				}
+				.action-us {
+					display: none !important;
+				}
+			}
+			.calendario {
+				width: 80%;
+				.card {
+					width: 100%;
+					.semana {
+						margin-bottom: 2vh;
+					}
+					.dias {
+						column-gap: 0.8vh !important;
+						row-gap: 1vh !important;
+					}
+				}
+			}
 		}
 	}
 </style>

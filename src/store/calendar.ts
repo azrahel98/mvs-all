@@ -98,6 +98,21 @@ export const calendarStore = defineStore('calendarStore', {
 				(a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
 			)
 		},
+		getUnion(): Array<any> {
+			let newarr = this.regis.doc
+			this.regis.ranges.forEach((e) => {
+				newarr.push({
+					asunto: e.asunto,
+					descripcion: e.descripcion,
+					det: e.det,
+					dni: e.dni,
+					doc: e.doc,
+					fecha: `${e.inicio} - ${e.fin}`,
+					referencia: e.referencia,
+				})
+			})
+			return newarr
+		},
 		tardanza(): number {
 			const suma = this.asistencia.reduce((a, b) => {
 				if (b.tardanza == null) b.tardanza = 0

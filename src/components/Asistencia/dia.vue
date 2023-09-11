@@ -52,7 +52,7 @@
 				<ModalCal :doc="(r as Object)" :id="(r as any).id" :ranged="false" />
 			</div>
 		</div>
-		<div class="text-center fs-3 fw-bolder text-youtube">
+		<div class="text-center fs-3 fw-bolder text-youtube tardanza">
 			{{
 				store.asistencia.find((x) => moment(x.fecha).date() == prop.dia)?.tardanza == 0
 					? ''
@@ -63,7 +63,7 @@
 			class="d-flex justify-content-center"
 			v-if="!store.asistencia.find((x) => moment(x.fecha).date() == prop.dia)?.falta"
 		>
-			<div class="input-group text-center" v-if="ustore.level == 3">
+			<div class="input-group text-center" v-if="ustore.level == 1">
 				<input
 					type="number"
 					class="form-control"
@@ -76,21 +76,20 @@
 		<context-menu
 			v-model:show="showmenu"
 			:options="(optionsComponent as MenuOptions)"
-			v-if="ustore.level == 3"
+			v-if="ustore.level == 1"
 		>
 			<context-menu-item
 				@click="agregar_falta"
 				v-if="!store.asistencia.find((x) => moment(x.fecha).date() == prop.dia)?.falta"
 			>
-				<label class="label fs-5 fw-bold text-youtube">Falta </label>
+				<label class="label fs-5 fw-bolder text-youtube">FALTA </label>
 
-				<user-edit-icon class="icon text-youtube" />
+				<user-edit-icon class="icon icon-pulse text-youtube" />
 			</context-menu-item>
 			<context-menu-item @click="quitar_falta" v-else>
-				<label class="label fs-5 fw-bold text-twitter">Editar</label>
-				<user-edit-icon class="icon text-twitter" />
+				<label class="label fs-5 fw-bold text-twitter">EDITAR</label>
+				<user-edit-icon class="icon icon-pulse text-twitter" />
 			</context-menu-item>
-			<context-menu-sperator />
 		</context-menu>
 	</div>
 </template>
@@ -163,10 +162,17 @@
 		width: min-content;
 		padding: 0;
 		margin: 0;
+		background-color: var(--tblr-info-lt);
 		.mx-context-menu-items {
-			width: min-content;
+			padding: 0;
+			margin: 0;
+			width: 100%;
 			flex-direction: column;
-			gap: 5vh;
+			gap: 0vh;
+			:hover {
+				background-color: var(--tblr-danger-lt);
+				border-radius: 10px 10px 0px 0px;
+			}
 		}
 	}
 	.mx-context-menu-scroll {
@@ -191,14 +197,15 @@
 	}
 	.card {
 		font-family: 'Montserrat', sans-serif;
-		min-height: 80px;
 		display: grid;
-		grid-template-rows: min-content min-content min-content auto;
+		grid-template-rows: min-content min-content min-content min-content;
 		padding: 0;
 		margin: 0;
 		font-weight: 500;
-		row-gap: 0.8vh;
+		row-gap: 0.1vh;
 		font-size: 0.75rem;
+		height: 100%;
+		min-height: 80px;
 		h2,
 		p {
 			margin: 0;
@@ -215,6 +222,7 @@
 			display: flex;
 			justify-content: space-around;
 			flex-wrap: wrap;
+
 			gap: 1vh;
 			div {
 				display: flex;
@@ -225,6 +233,20 @@
 			display: flex;
 			justify-content: space-around;
 			flex-wrap: wrap;
+		}
+	}
+
+	@media print {
+		.card {
+			border: 2px dashed #6e7072;
+			background-color: white;
+			input {
+				display: none;
+			}
+			.tardanza {
+				font-size: 1.5rem !important;
+				color: red;
+			}
 		}
 	}
 </style>

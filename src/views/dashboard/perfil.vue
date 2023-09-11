@@ -27,7 +27,7 @@
 									},
 								}"
 								tag="a"
-								class="btn btn-primary"
+								class="btn btn-toolbar btn-outline-twitter"
 							>
 								<check-icon class="icon" />
 								Asistencia
@@ -45,38 +45,50 @@
 							<li class="timeline-event" v-for="x in contratos">
 								<div
 									class="timeline-event-icon"
-									:class="x.activo == 'Y' ? ' text-primary bg-primary' : ''"
+									:class="x.activo == 'Y' ? ' text-facebook ' : 'text-youtube'"
 								>
-									<file-export-icon
-										class="icon"
-										:class="x.activo == 'Y' ? ' text-white bg-primary' : ''"
-									/>
+									{{ x.ingreso }}
+									<!-- <file-export-icon
+										class="icon-sm"
+										:class="
+											x.activo == 'Y'
+												? ' text-white text-twitter icon-pulse icon-filled'
+												: ''
+										"
+									/> -->
 								</div>
 								<div class="card timeline-event-card">
 									<div class="card-body">
-										<div class="text-secondary float-end">{{ x.ingreso }}</div>
 										<h4>{{ x.cargo }}</h4>
 										<div class="row">
 											<div class="col-12 informacion">
 												<div class="informacion text-secondary">
 													<div class="list-inline-item-e">
-														<building-community-icon class="icon icon-sm" />
+														<building-community-icon
+															class="icon icon-sm text-azure icon-filled"
+														/>
 														<span class="fs-5">{{ x.area }}</span>
 													</div>
 													<div class="list-inline-item-e">
-														<clipboard-icon class="icon icon-sm" />
-														<span class="fs-5">{{ x.convocatoria_s }}</span>
+														<clipboard-icon class="icon icon-sm text-azure icon-filled" />
+														<span class="fs-5 text-uppercase">{{
+															x.convocatoria_s
+														}}</span>
 													</div>
 													<div class="list-inline-item-e">
-														<table-options-icon class="icon icon-sm" />
+														<table-options-icon
+															class="icon icon-sm text-azure icon-filled"
+														/>
 														<span class="fs-5">{{ x.regimen }}</span>
 													</div>
 													<div class="list-inline-item-e">
-														<door-exit-icon class="icon icon-sm" />
+														<door-exit-icon class="icon icon-sm text-azure icon-filled" />
 														<span class="fs-5">{{ x.renuncia }}</span>
 													</div>
 													<div class="list-inline-item-e">
-														<businessplan-icon class="icon icon-sm" />
+														<businessplan-icon
+															class="icon icon-sm text-azure icon-filled"
+														/>
 														<span class="fs-5">{{ x.sueldo }}</span>
 													</div>
 												</div>
@@ -157,6 +169,13 @@
 	})
 </script>
 <style lang="scss" scoped>
+	.timeline-event-icon {
+		width: max-content;
+		font-weight: 600;
+	}
+	.timeline-event-card {
+		margin-left: 9vh;
+	}
 	.informacion {
 		width: 100%;
 		display: grid;

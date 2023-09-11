@@ -38,11 +38,6 @@
 						:activo="x.activos"
 						:sexo="x.sexo"
 					/>
-					<Vue3Lottie
-						v-else
-						:animationLink="`https://lottie.host/bba86c56-2f45-4a2e-a2b0-9c78eb2b6a06/UbZPhGekDE.json`"
-						class="lottie"
-					/>
 				</div>
 			</div>
 		</div>
