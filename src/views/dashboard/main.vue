@@ -9,22 +9,27 @@
 							{{ Trabajadores.length }} encontrados
 						</div>
 					</div>
-					<div class="col-auto ms-auto d-print-none">
-						<div class="d-flex">
-							<input
-								type="search"
-								class="form-control d-inline-block w-9 me-3"
-								placeholder="Pepito Perez"
-								v-model="nombre"
-								@keyup.enter="buscar"
-							/>
-							<!-- <a class="btn btn-primary">
-								<plus-icon class="icon" />
-								Trabajador
-							</a> -->
-						</div>
-					</div>
 				</div>
+				<div class="search-container">
+					<input
+						type="search"
+						class="form-control fs-4 text-center"
+						placeholder="Pepito Peres"
+						v-model="nombre"
+						@keyup.enter="buscar"
+					/>
+				</div>
+				<!-- <div class="row">
+					<div class="col-auto ms-auto d-print-none">
+						<input
+							type="search"
+							class="form-control d-inline-block w-9 me-3"
+							placeholder="Pepito Perez"
+							v-model="nombre"
+							@keyup.enter="buscar"
+						/>
+					</div>
+				</div> -->
 			</div>
 		</div>
 		<div class="page-body">
@@ -77,9 +82,24 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.lottie {
 		height: 50vh;
+	}
+	.search-container {
+		display: flex;
+		align-items: center;
+		max-width: 400px;
+		margin: 0 auto;
+
+		input {
+			flex: 1;
+			padding: 10px;
+			border-radius: 50px;
+			outline: none;
+			background-color: #fff;
+			box-shadow: 0 0 1px rgba(143, 174, 231, 0.1);
+		}
 	}
 
 	// .Vue-Toastification__container {

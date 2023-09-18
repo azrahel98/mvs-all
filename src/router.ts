@@ -40,7 +40,6 @@ const routes: RouteRecordRaw[] = [
 		beforeEnter: (_to, _from, next): void => {
 			decodeTokena(next)
 		},
-
 		children: [
 			{
 				path: '/',
@@ -55,7 +54,13 @@ const routes: RouteRecordRaw[] = [
 			{
 				name: 'asistencia',
 				path: '/asistencia/:dni/:mes/:year',
+				strict: true,
 				component: () => import('@views/dashboard/asistencia.vue'),
+			},
+			{
+				name: 'adenda',
+				path: '/adenda',
+				component: () => import('@views/dashboard/adenda.vue'),
 			},
 		],
 	},

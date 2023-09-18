@@ -12,12 +12,16 @@ export interface registro {
 
 export const calendarStore = defineStore('calendarStore', {
 	state: () => ({
+		mes: 1,
+		year: 2023,
+		dni: '',
 		regis: {
 			registros: [],
-			doc: [],
+			docs: [],
 			ranges: [],
 		} as unknown as Marcaciones,
 		asistencia: [] as Array<registro>,
+		isloading: false as boolean,
 		saved: false as boolean,
 	}),
 	actions: {
@@ -30,47 +34,49 @@ export const calendarStore = defineStore('calendarStore', {
 			this.$state.regis = await buscarRegistros(dni, mes, year)
 			this.$state.asistencia = await buscar_asistencia(dni, mes, year)
 		},
-		addDayInfo(r: registro): boolean {
+		addDayInfo(dia: number, tardanza: number | null, falta: boolean): boolean {
 			this.saved = true
-			if (this.asistencia.find((e) => moment(e.fecha).date() == moment(r.fecha).date())) {
-				if (!r.falta && r.tardanza == 0) {
+			if (this.get_day(dia)) {
+				if ((!falta && tardanza == 0) || tardanza == null) {
 					this.asistencia = this.asistencia.filter(
-						(e) => moment(e.fecha).date() !== moment(r.fecha).date()
+						(e) => parseInt(e.fecha.toString().split('-')[2]) !== dia
 					)
 					return false
+				} else if ((falta && tardanza != null) || tardanza == 0) {
+					this.asistencia.find(
+						(e) => parseInt(e.fecha.toString().split('-')[2]) == dia
+					)!.tardanza = null
 				}
 				this.asistencia.find(
-					(e) => moment(e.fecha).date() == moment(r.fecha).date()
-				)!.falta = r.falta
-				this.asistencia.find(
-					(e) => moment(e.fecha).date() == moment(r.fecha).date()
-				)!.tardanza = r.tardanza
+					(e) => parseInt(e.fecha.toString().split('-')[2]) == dia
+				)!.tardanza = tardanza
 				return true
 			} else {
-				if (r.falta && r.tardanza != 0) {
+				if (falta && (tardanza != 0 || tardanza == null)) {
 					this.asistencia.push({
-						falta: r.falta,
-						fecha: r.fecha,
+						dni: this.dni,
+						falta: falta,
+						fecha: `${this.year}-${this.mes}-${dia}`,
 						tardanza: null,
-						dni: r.dni,
 					})
-				} else if ((!r.falta && r.tardanza == null) || r.tardanza == 0) {
+					return true
+				} else if (!falta && tardanza == null) {
 					return false
 				} else {
-					if (r.tardanza && r.tardanza > 0) {
+					if (tardanza && tardanza > 0) {
 						this.asistencia.push({
-							falta: r.falta,
-							fecha: r.fecha,
-							tardanza: r.tardanza,
-							dni: r.dni,
+							dni: this.dni,
+							falta: falta,
+							fecha: `${this.year}-${this.mes}-${dia}`,
+							tardanza: tardanza,
 						})
 						return true
 					}
 					return false
 				}
 			}
-			return false
 		},
+
 		borrar(ranged: boolean, id: number) {
 			if (ranged) {
 				const nuevo = this.$state.regis.ranges.filter((e: any) => e.id !== id)
@@ -91,28 +97,54 @@ export const calendarStore = defineStore('calendarStore', {
 	},
 	getters: {
 		get_registro: (state) => (dia: number) => {
-			return state.asistencia.find((e) => moment(e.fecha).date() == dia)
+			return state.asistencia.find(
+				(e) => moment(e.fecha, 'YYYY-MM-DD').date() == dia
+			) as any
 		},
+		get_regis: (state) => (dia: number) => {
+			return state.regis.registros.find(
+				(e: any) => moment(e.fecha, 'YYYY-MM-DD').date() == dia
+			)
+		},
+		get_docs: (state) => (dia: number) => {
+			return state.regis.doc?.filter(
+				(e: any) => moment(e.fecha, 'YYYY-MM-DD').date() == dia
+			)
+		},
+		get_ranges: (state) => (dia: number) => {
+			return state.regis?.ranges.filter((e: any) =>
+				moment({
+					year: state.year,
+					month: state.mes,
+					day: dia,
+				}).isBetween(
+					moment({
+						year: parseInt(String(e.inicio).split('-')[0]),
+						month: parseInt(String(e.inicio).split('-')[1]),
+						day: parseInt(String(e.inicio).split('-')[2]),
+					}),
+					moment({
+						year: parseInt(String(e.fin).split('-')[0]),
+						month: parseInt(String(e.fin).split('-')[1]),
+						day: parseInt(String(e.fin).split('-')[2]),
+					}),
+					null,
+					'[]'
+				)
+			)
+		},
+		get_day: (state) => (dia: number) => {
+			return state.asistencia.find(
+				(e) => parseInt(e.fecha.toString().split('-')[2]) == dia
+			)
+		},
+
 		getList(): Array<registro> {
 			return this.asistencia.sort(
 				(a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
 			)
 		},
-		getUnion(): Array<any> {
-			let newarr = this.regis.doc
-			this.regis.ranges.forEach((e) => {
-				newarr.push({
-					asunto: e.asunto,
-					descripcion: e.descripcion,
-					det: e.det,
-					dni: e.dni,
-					doc: e.doc,
-					fecha: `${e.inicio} - ${e.fin}`,
-					referencia: e.referencia,
-				})
-			})
-			return newarr
-		},
+
 		tardanza(): number {
 			const suma = this.asistencia.reduce((a, b) => {
 				if (b.tardanza == null) b.tardanza = 0

@@ -21,19 +21,6 @@
 				</a>
 			</h1>
 			<div class="navbar-nav flex-row order-md-last">
-				<!-- <div class="d-none d-md-flex">
-					<div class="nav-item dropdown d-none d-md-flex me-3">
-						<a
-							class="nav-link px-0"
-							data-bs-toggle="dropdown"
-							tabindex="-1"
-							aria-label="Show notifications"
-						>
-							<bell-icon class="icon" />
-							<span class="badge bg-red"></span>
-						</a>
-					</div>
-				</div> -->
 				<div class="nav-item dropdown">
 					<a
 						class="nav-link d-flex lh-1 text-reset p-0"
@@ -47,16 +34,11 @@
 							"
 						></span>
 						<div class="d-none d-xl-block ps-2">
-							<div>Raul Chercca</div>
-							<div class="mt-1 small text-muted">Admin</div>
+							<div class="fs-5 fw-bold text-muted">{{ ustore.nombre }}</div>
+							<div class="mt-1 small text-muted">{{ ustore.level }}</div>
 						</div>
 					</a>
 					<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-						<a href="#" class="dropdown-item">Status</a>
-						<a href="./profile.html" class="dropdown-item">Profile</a>
-						<a href="#" class="dropdown-item">Feedback</a>
-						<div class="dropdown-divider"></div>
-						<a href="./settings.html" class="dropdown-item">Settings</a>
 						<a @click="logout" class="dropdown-item">Logout</a>
 					</div>
 				</div>
@@ -66,20 +48,35 @@
 					class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center"
 				>
 					<ul class="navbar-nav">
-						<li class="nav-item">
-							<RouterLink
-								:to="{
-									path: '/',
-								}"
-								class="nav-link"
-								tag="a"
-							>
+						<RouterLink
+							:to="{
+								path: '/',
+							}"
+							class="nav-item"
+							tag="li"
+						>
+							<a class="nav-link">
 								<span class="nav-link-icon d-md-none d-lg-inline-block">
 									<home-icon class="icon" />
 								</span>
 								<span class="nav-link-title"> Trabajadores </span>
-							</RouterLink>
-						</li>
+							</a>
+						</RouterLink>
+						<RouterLink
+							:to="{
+								path: '/adenda',
+							}"
+							class="nav-item"
+							tag="li"
+							:exact-active-class="'active'"
+						>
+							<a class="nav-link">
+								<span class="nav-link-icon d-md-none d-lg-inline-block">
+									<home-icon class="icon" />
+								</span>
+								<span class="nav-link-title"> Adenda </span>
+							</a>
+						</RouterLink>
 					</ul>
 				</div>
 			</div>
@@ -88,7 +85,10 @@
 </template>
 
 <script lang="ts" setup>
+	import { userStore } from '@store/user'
 	import { router } from '../router'
+
+	const ustore = userStore()
 
 	const logout = () => {
 		localStorage.clear()

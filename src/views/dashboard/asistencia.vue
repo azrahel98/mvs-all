@@ -8,11 +8,11 @@
 				:dni="employ.dni!"
 				:sexo="employ.sexo!"
 			/>
-			<div class="c-flex dia" v-if="!isLoading">
-				<div class="main card col-lg-6 col-xl-6 col-xxl-5 col-md-8 col-sm-12">
+			<div class="c-flex dia">
+				<div class="main card col-lg-8 col-xl-7 col-xxl-4 col-md-10 col-sm-12">
 					<div class="calendar-tools">
-						<div class="d-flex flex-column flex-lg-row">
-							<div class="d-flex align-content-center justify-content-center flechas">
+						<div class="d-flex">
+							<div class="align-content-center justify-content-center flechas">
 								<button
 									class="btn btn-link text-dark ripple-surface-dark btn-icon"
 									style="min-width: 55.5px"
@@ -52,7 +52,7 @@
 							<addCard />
 						</div>
 					</div>
-					<div class="calendario" v-if="!isLoading">
+					<div class="calendario">
 						<div class="card xd">
 							<div class="semana">
 								<div class="card">L</div>
@@ -73,53 +73,25 @@
 								/>
 
 								<div
-									v-for="x in moment(
-										`${dateInfo.year}-${dateInfo.mes}-01`,
-										'yyyy-mm-dd'
-									).daysInMonth()"
+									v-for="x in moment([
+										parseInt(router.currentRoute.value.params.year.toString()),
+										parseInt(router.currentRoute.value.params.mes.toString()) - 1,
+									])
+										.endOf('month')
+										.date()"
 								>
 									<CardDia
 										:dia="x"
-										:registro="calstore.regis.registros.find((e:any) => moment(e.fecha).date() == x)"
-										:docs="calstore.regis.doc.filter((e:any) => moment(e.fecha).date() == x )"
-										:range="calstore.regis?.ranges.filter((e:any) => moment(`${dateInfo.year}-${dateInfo.mes}-${x}`,'yyyy-mm-dd').isBetween(moment(e.inicio,'yyyy-mm-dd'),moment(e.fin,'yyyy-mm-dd'),null,'[]') )"
+										:mes="parseInt(router.currentRoute.value.params.mes.toString())"
+										:year="dateInfo.year"
+										:dni="router.currentRoute.value.params.dni.toString()"
+										:docs="calstore.regis.doc?.filter((e: any) => moment(e.fecha).date() == x)"
+										:range="calstore.get_ranges(x)"
 									/>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="imprimir">
-					<table class="table table-bordered">
-						<thead>
-							<tr>
-								<th scope="col">#</th>
-								<th scope="col">ASUNTO</th>
-								<th scope="col">DESCRIPCION</th>
-								<th scope="col">FECHA</th>
-								<th scope="col">REFERENCIA</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="(x, y) in calstore.regis.doc">
-								<th scope="row">{{ y + 1 }}</th>
-								<td>{{ x.asunto }}</td>
-								<td>{{ x.descripcion }}</td>
-								<td>{{ x.fecha }}</td>
-								<td>{{ x.referencia }}</td>
-							</tr>
-							<tr
-								v-if="calstore.regis.ranges.length > 0"
-								v-for="x in calstore.regis.ranges"
-							>
-								<th scope="row">0</th>
-								<td>{{ x.asunto }}</td>
-								<td>{{ x.descripcion }}</td>
-								<td>{{ x.inicio }} - {{ x.fin }}</td>
-								<td>{{ x.referencia }}</td>
-							</tr>
-						</tbody>
-					</table>
 				</div>
 			</div>
 		</div>
@@ -131,7 +103,7 @@
 	import { httpService } from '@utils/api'
 	import { getMonthName } from '@utils/abrv'
 	import { router } from '../../router'
-	import { onBeforeMount, onUnmounted, ref, watch } from 'vue'
+	import { onMounted, ref, watch } from 'vue'
 	import moment from 'moment'
 	import CardInfo from '@components/Asistencia/trabajador.vue'
 	import { calendarStore } from '@store/calendar'
@@ -140,7 +112,6 @@
 	import addCard from '@components/Asistencia/docs/add.vue'
 	import { onBeforeRouteLeave } from 'vue-router'
 
-	const isLoading = ref(false)
 	const dni = router.currentRoute.value.params as any
 	const calstore = calendarStore()
 	const ustore = userStore()
@@ -157,36 +128,35 @@
 		year: <number>parseInt(dni.year),
 	})
 
-	onBeforeMount(async () => {
+	onMounted(async () => {
 		try {
-			isLoading.value = true
+			calstore.isloading = true
 			var infores = await httpService.get(`/employ/info/${dni.dni}`)
 			employ.value = infores.data.result
 			document.title = `${employ.value.nombre} - ${dni.mes}/${dni.year}`
 			await calstore.agregar(dni.dni, parseInt(dni.mes), parseInt(dni.year))
-			isLoading.value = false
+			calstore.mes = parseInt(router.currentRoute.value.params.mes.toString())
+			calstore.year = parseInt(router.currentRoute.value.params.year.toString())
+			calstore.dni = router.currentRoute.value.params.dni.toString()
+			calstore.isloading = false
 		} catch (error) {
 			console.log(error)
 		}
 	})
 
-	onUnmounted(() => {
-		calstore.$reset()
-		document.title = 'Control de Asistencia'
-	})
-
 	watch(dateInfo.value, async (r, _x) => {
 		try {
-			isLoading.value = true
-
+			calstore.isloading = true
 			await calstore.agregar(dni.dni, r.mes, parseInt(r.year))
 			await router.replace({
 				params: { dni: dni.dni, mes: parseInt(r.mes), year: r.year },
 			})
-			isLoading.value = false
+			calstore.mes = dateInfo.value.mes
+			calstore.year = dateInfo.value.year
+			calstore.isloading = false
 		} catch (error) {
 			console.log(error)
-			isLoading.value = false
+			calstore.isloading = false
 		}
 	})
 
@@ -194,7 +164,6 @@
 		if (calstore.saved) {
 			let data = confirm('Estas seguro de salir sin guardar')
 			if (data) {
-				calstore.$reset()
 				if (dateInfo.value.mes == 12) {
 					dateInfo.value.mes = 1
 					dateInfo.value.year = dateInfo.value.year + 1
@@ -216,7 +185,6 @@
 		if (calstore.saved) {
 			let data = confirm('Estas seguro de salir sin guardar')
 			if (data) {
-				calstore.$reset()
 				if (dateInfo.value.mes == 1) {
 					dateInfo.value.mes = 12
 					dateInfo.value.year = dateInfo.value.year - 1
@@ -251,10 +219,11 @@
 		try {
 			await httpService.post('/asistencia/agregar', {
 				dni: dni.dni,
-				mes: dateInfo.value.mes,
-				year: dateInfo.value.year,
+				mes: parseInt(router.currentRoute.value.params.mes.toString()),
+				year: parseInt(router.currentRoute.value.params.year.toString()),
 				registros: calstore.getListUploat,
 			})
+
 			calstore.saved = false
 		} catch (error) {
 			console.log(error)
@@ -286,7 +255,6 @@
 					border-radius: 10vh;
 					width: 100%;
 					display: flex;
-					flex-wrap: wrap;
 					justify-content: space-between;
 					gap: 2vh;
 					div {
@@ -356,14 +324,6 @@
 		}
 	}
 
-	@keyframes cambiaColor {
-		0% {
-			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
 	@media print {
 		.imprimir {
 			display: block;

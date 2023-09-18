@@ -108,12 +108,11 @@
 									/>
 								</div>
 								<div class="input-group gap-2">
-									<v-date-picker
+									<VDatePicker
 										mode="date"
+										v-model.range="valrange"
 										class="mt-2"
-										:is-range="true"
 										:class="isrange ? '' : 'd-none'"
-										v-model="valrange"
 									/>
 									<textarea class="mt-2 form-control" v-model="det.descripcion" />
 								</div>

@@ -13,7 +13,15 @@ export async function buscarRegistros(
 			mes,
 			year,
 		})
-		return data.data.documentos
+		var maracaciones = {} as Marcaciones
+
+		if ((data.data.documentos.doc as Array<any>).length != 0) {
+			maracaciones.doc = data.data.documentos.doc
+		}
+
+		maracaciones.ranges = data.data.documentos.ranges
+		maracaciones.registros = data.data.documentos.registros
+		return maracaciones
 	} catch (error) {
 		console.log(error)
 		throw error

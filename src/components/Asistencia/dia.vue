@@ -1,34 +1,33 @@
 <template>
 	<div
 		class="card"
-		@contextmenu="showmenuconttext($event)"
+		@contextmenu="showmenuconttext"
 		:class="[
-			docs!.length > 0 && !registro ? `${AbrevAsuntos((docs![0] as any).asunto).bg}` : '',
-			range!.length > 0 && docs ? `${AbrevAsuntos((range![0] as any).asunto).bg}`:'',
-			 store.asistencia.find((x) => moment(x.fecha).date() == prop.dia )?.falta ? 'bg-danger bg-gradient':'',
-			 store.asistencia.find((x) => moment(x.fecha).date() == prop.dia )?.tardanza ? 'bg-warning-lt bg-gradient':'',
+			store.get_registro(dia)?.falta ? 'bg-danger bg-gradient' : '',
+			store.get_registro(dia)?.tardanza ? 'bg-warning-lt bg-gradient' : '',
+			store.isloading ? 'skeleton-loader' : '',
 		]"
 	>
 		<h2 class="text-dark">{{ prop.dia }}</h2>
-		<div class="horas" v-if="prop.registro">
+		<div class="horas" v-if="!store.isloading && store.get_regis(prop.dia)">
 			<div>
 				<span class="status-dot bg-azure d-block text-center" />
-				<p>{{ ((prop.registro as any).entrada as string).substring(0, 5) }}</p>
+				<p>{{ store.get_regis(prop.dia)?.entrada.substring(0, 5) }}</p>
 			</div>
-			<div v-if="(prop.registro as any).entrada2">
+			<div v-if="store.get_regis(prop.dia)?.entrada2">
 				<span class="status-dot bg-azure d-block text-center" />
 				<p>
-					{{ ((prop.registro as any).entrada2 as string).substring(0, 5) }}
+					{{ (store.get_regis(prop.dia) as any).entrada2.substring(0, 5) }}
 				</p>
 			</div>
-			<div v-if="(prop.registro as any).salida">
+			<div v-if="store.get_regis(prop.dia)?.salida">
 				<span class="status-dot bg-azure d-block text-center" />
 				<p>
-					{{ ((prop.registro as any).salida as string).substring(0, 5) }}
+					{{ (store.get_regis(prop.dia) as any).salida.substring(0, 5) }}
 				</p>
 			</div>
 		</div>
-		<div class="docs" v-if="docs?.length != 0 || range?.length != 0">
+		<div class="docs">
 			<div class="ranges" v-if="prop.range" v-for="r in prop.range">
 				<div
 					class="badge text-white"
@@ -54,19 +53,18 @@
 		</div>
 		<div class="text-center fs-3 fw-bolder text-youtube tardanza">
 			{{
-				store.asistencia.find((x) => moment(x.fecha).date() == prop.dia)?.tardanza == 0
-					? ''
-					: store.asistencia.find((x) => moment(x.fecha).date() == prop.dia)?.tardanza
+				store.get_registro(dia)?.tardanza == 0 ? '' : store.get_registro(dia)?.tardanza
 			}}
 		</div>
 		<div
-			class="d-flex justify-content-center"
-			v-if="!store.asistencia.find((x) => moment(x.fecha).date() == prop.dia)?.falta"
+			class="d-flex justify-content-center pb-1"
+			v-if="!store.get_registro(dia)?.falta"
 		>
 			<div class="input-group text-center" v-if="ustore.level == 1">
 				<input
 					type="number"
 					class="form-control"
+					tabindex="1"
 					@change="changed"
 					v-model="asitencia.tardanza"
 					:class="[asitencia.saved ? 'is-valid' : '']"
@@ -97,12 +95,11 @@
 <script lang="ts" setup>
 	import { reactive, ref } from 'vue'
 	import { AbrevAsuntos } from '@utils/abrv'
-	import { router } from '../../router'
-	import ModalCal from '@components/Asistencia/moda_info.vue'
-	import { ContextMenu, ContextMenuItem, MenuOptions } from '@imengyu/vue3-context-menu'
-	import { calendarStore } from '@store/calendar'
 	import moment from 'moment'
+	import ModalCal from '@components/Asistencia/moda_info.vue'
+	import { calendarStore } from '@store/calendar'
 	import { userStore } from '@store/user'
+	import { MenuOptions } from '@imengyu/vue3-context-menu'
 
 	const prop = defineProps({
 		dia: { type: Number, required: true },
@@ -129,30 +126,32 @@
 		showmenu.value = true
 	}
 
-	const params = router.currentRoute.value.params as any
-
 	const asitencia = reactive<any>({
 		falta: 0,
-		fecha: `${params.year}-${params.mes}-${prop.dia}`,
+		fecha: `${store.year}-${store.mes}-${prop.dia}`,
 		tardanza: null,
-		dni: params.dni,
+		dni: store.dni,
 	})
 
 	const changed = (_e: any) => {
-		console.log(asitencia)
-		store.addDayInfo(asitencia)
+		// store.addDayInfo(asitencia, prop.dia)
+		store.addDayInfo(prop.dia, asitencia.tardanza, asitencia.falta)
+		asitencia.falta = false
+		asitencia.tardanza = null
 		return
 	}
 
 	const agregar_falta = () => {
 		asitencia.falta = true
 		asitencia.tardanza = null
-		store.addDayInfo(asitencia)
+		// store.addDayInfo(asitencia, prop.dia)
+		store.addDayInfo(prop.dia, asitencia.tardanza, asitencia.falta)
 	}
 	const quitar_falta = () => {
 		asitencia.falta = false
 		asitencia.tardanza = null
-		store.addDayInfo(asitencia)
+		store.addDayInfo(prop.dia, asitencia.tardanza, asitencia.falta)
+		// store.addDayInfo(asitencia, prop.dia)
 	}
 </script>
 <style lang="scss">
@@ -182,6 +181,37 @@
 <style lang="scss" scoped>
 	@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
+	.skeleton-loader {
+		width: 100%;
+		height: 100%;
+		position: relative;
+		overflow: hidden;
+		input {
+			display: none;
+		}
+		.status-dot {
+			display: none;
+		}
+	}
+
+	/* Estilo para el fondo pulsante */
+	.skeleton-loader::before {
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background-color: #f6f8fb;
+		background-size: 200% 100%;
+		animation: loading 1.5s infinite;
+	}
+	@keyframes loading {
+		0% {
+			background-position: -200% 0;
+		}
+		100% {
+			background-position: 200% 0;
+		}
+	}
 	.input-group {
 		padding: 0;
 		margin: 0;
@@ -197,8 +227,11 @@
 	}
 	.card {
 		font-family: 'Montserrat', sans-serif;
-		display: grid;
-		grid-template-rows: min-content min-content min-content min-content;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
 		padding: 0;
 		margin: 0;
 		font-weight: 500;

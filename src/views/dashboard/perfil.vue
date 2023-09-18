@@ -27,7 +27,7 @@
 									},
 								}"
 								tag="a"
-								class="btn btn-toolbar btn-outline-twitter"
+								class="btn"
 							>
 								<check-icon class="icon" />
 								Asistencia
@@ -40,22 +40,14 @@
 		<div class="page-body">
 			<div class="container-xl">
 				<div class="row g-3">
-					<div class="col">
+					<div class="col-lg-6 col-xxl-5 col-xl-6">
 						<ul class="timeline">
 							<li class="timeline-event" v-for="x in contratos">
 								<div
-									class="timeline-event-icon"
-									:class="x.activo == 'Y' ? ' text-facebook ' : 'text-youtube'"
+									class="timeline-event-icon badge text-white"
+									:class="x.activo == 'Y' ? 'bg-green text-white ' : 'bg-youtube-lt '"
 								>
 									{{ x.ingreso }}
-									<!-- <file-export-icon
-										class="icon-sm"
-										:class="
-											x.activo == 'Y'
-												? ' text-white text-twitter icon-pulse icon-filled'
-												: ''
-										"
-									/> -->
 								</div>
 								<div class="card timeline-event-card">
 									<div class="card-body">
@@ -99,7 +91,7 @@
 							</li>
 						</ul>
 					</div>
-					<div class="col-lg-4">
+					<div class="col-lg-6 col-xxl-4 col-xl-6">
 						<div class="row row-cards">
 							<div class="col-12">
 								<div class="card">
@@ -170,23 +162,12 @@
 </script>
 <style lang="scss" scoped>
 	.timeline-event-icon {
-		width: max-content;
+		width: min-content;
 		font-weight: 600;
+		height: min-content;
 	}
-	.timeline-event-card {
-		margin-left: 9vh;
-	}
-	.informacion {
-		width: 100%;
-		display: grid;
-		justify-content: center;
-		column-gap: 1vh;
-		row-gap: 0.5vh;
-		align-items: center;
-		align-content: center;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-template-rows: min-content min-content;
 
+	.informacion {
 		.list-inline-item-e {
 			display: flex;
 			gap: 0.5vh;

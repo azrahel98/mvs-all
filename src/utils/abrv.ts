@@ -71,18 +71,18 @@ export function AbrevAsuntos(asunto: string) {
 
 export function getMonthName(mes: number) {
 	const monthNames = [
-		'Enero',
-		'Febrero',
-		'Marzo',
-		'Abril',
-		'Mayo',
-		'Junio',
-		'Julio',
-		'Agosto',
-		'Septiembre',
-		'Octobre',
-		'Noviembre',
-		'Deciembre',
+		'ENERO',
+		'FEBRERO',
+		'MARZO',
+		'ABRIL',
+		'MAYO',
+		'JUNIO',
+		'JULIO',
+		'AGOSTO',
+		'SEPTIEMBRE',
+		'OCTUBRE',
+		'NOVIEMBRE',
+		'DICIEMBRE',
 	]
 
 	return monthNames[mes - 1]

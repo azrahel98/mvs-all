@@ -3,9 +3,9 @@ export interface Marcaciones {
 		{
 			dni: string
 			entrada: string
+			entrada2: string
 			salida: string
-			tardanza: string
-			date: string
+			fecha: string
 		}
 	]
 	ranges: [

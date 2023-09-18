@@ -70,6 +70,8 @@
 			width: max-content;
 			justify-content: center;
 			justify-self: center;
+
+			padding: 1.2vh !important;
 			.icono {
 				width: max-content;
 				justify-self: center;

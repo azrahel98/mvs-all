@@ -1,21 +1,21 @@
 <template>
 	<div
-		class="modal fade"
+		class="modal modal-blur fade"
 		:id="`d-${(prop.doc as any).id}`"
-		data-bs-keyboard="false"
 		tabindex="-1"
+		style="display: none"
 		aria-hidden="true"
 	>
-		<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
 					<div class="card">
-						<div class="ribbon ribbon-top bg-bitbucket-lt"></div>
+						<div class="ribbon ribbon-top bg-bitbucket-lt">
+							{{ (prop.doc as any).doc }}
+						</div>
 						<div class="card-body">
 							<h3 class="card-title" data-bs-dismiss="modal">
-								{{ (prop.doc as any).asunto }} -{{ (prop.doc as any).nombre }}-{{
-									(prop.doc as any).doc
-								}}
+								{{ (prop.doc as any).asunto }} -{{ (prop.doc as any).nombre }}
 							</h3>
 							<p class="text-muted">
 								{{ (prop.doc as any).descripcion }}

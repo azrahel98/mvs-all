@@ -5,6 +5,7 @@ export const userStore = defineStore('userStore', {
 	state: () => ({
 		user: 0,
 		level: 0,
+		nombre: '',
 	}),
 	actions: {
 		async agregar() {
@@ -13,6 +14,7 @@ export const userStore = defineStore('userStore', {
 
 			this.user = parseInt(tokendata.sub)
 			this.level = parseInt(tokendata.lvl)
+			this.nombre = tokendata.nombre
 		},
 	},
 })

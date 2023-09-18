@@ -6596,7 +6596,7 @@ body[data-bs-theme='dark'] [data-bs-theme='light'] .btn-close {
 }
 .modal.fade .modal-dialog {
 	transition: transform 0.3s ease-out;
-	transform: translate(0, -1rem);
+	transform: translate(0, -50px);
 }
 @media (prefers-reduced-motion: reduce) {
 	.modal.fade .modal-dialog {
