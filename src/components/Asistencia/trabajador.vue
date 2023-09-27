@@ -17,6 +17,7 @@
 				<div>
 					<h3 class="m-0 mb-1">
 						<RouterLink
+							class="fs-4"
 							:to="{
 								name: 'perfil',
 								params: {
@@ -27,7 +28,7 @@
 							{{ prop.nombre }}
 						</RouterLink>
 					</h3>
-					<div class="text-secondary fs-5">{{ prop.dni }}</div>
+					<div class="text-secondary fs-6">{{ prop.dni }}</div>
 					<div class="info">
 						<div class="text-muted fs-6 fw-bold">
 							<checkbox-icon class="icon" /> {{ area }}

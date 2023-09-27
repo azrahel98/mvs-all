@@ -1,9 +1,9 @@
 <template>
 	<div class="page page-center">
-		<div class="container container-tight py-4">
+		<div class="container-narrow py-4">
 			<div class="card card-md">
 				<div class="card-body">
-					<h2 class="h2 text-center mb-4">Creacion Andas</h2>
+					<h2 class="h2 text-center mb-4">Crear Adendas</h2>
 					<form @submit.prevent="crea_anda" autocomplete="off">
 						<div class="row row-cards">
 							<div class="col-md-4">
@@ -14,8 +14,8 @@
 										class="form-control"
 										placeholr="Company"
 										maxlength="8"
-										v-mol="datos.dni"
-										no
+										@keyup.enter="buscar"
+										v-model="datos.dni"
 									/>
 								</div>
 							</div>
@@ -26,8 +26,7 @@
 										type="text"
 										class="form-control"
 										placeholr="Username"
-										v-mol="datos.nombre"
-										no
+										v-model="datos.nombre"
 									/>
 								</div>
 							</div>
@@ -37,9 +36,8 @@
 									<input
 										type="text"
 										class="form-control"
-										v-mol="datos.area"
+										v-model="datos.area"
 										placeholr="Email"
-										no
 									/>
 								</div>
 							</div>
@@ -49,9 +47,8 @@
 									<input
 										type="text"
 										class="form-control"
-										v-mol="datos.cargo"
+										v-model="datos.cargo"
 										placeholr="Email"
-										no
 									/>
 								</div>
 							</div>
@@ -61,16 +58,15 @@
 									<input
 										type="text"
 										class="form-control"
-										v-mol="datos.ruc"
-										maxlength="10"
-										no
+										v-model="datos.ruc"
+										maxlength="11"
 									/>
 								</div>
 							</div>
 							<div class="col-sm-6 col-md-6">
 								<div class="mb-3">
 									<label class="form-label">Contrato</label>
-									<input type="text" class="form-control" v-mol="datos.contrato" no />
+									<input type="text" class="form-control" v-model="datos.contrato" no />
 								</div>
 							</div>
 							<div class="col-md-12">
@@ -79,9 +75,8 @@
 									<input
 										type="text"
 										class="form-control"
-										v-mol="datos.direccion"
+										v-model="datos.direccion"
 										placeholr="Av 1 Mz f Lt 2"
-										no
 									/>
 								</div>
 							</div>
@@ -92,7 +87,7 @@
 										type="text"
 										name="input-mask"
 										class="form-control"
-										v-mol="datos.info.inicio"
+										v-model="datos.info.inicio"
 										data-mask="00/00/0000"
 										data-mask-visible="true"
 										placeholr="00/00/0000"
@@ -108,7 +103,7 @@
 										name="input-mask"
 										class="form-control"
 										data-mask="00/00/0000"
-										v-mol="datos.info.fin"
+										v-model="datos.info.fin"
 										data-mask-visible="true"
 										placeholr="00/00/0000"
 										autocomplete="off"
@@ -173,6 +168,7 @@
 	import { reactive, ref } from 'vue'
 	import dayjs from 'dayjs'
 	import { getMonthName } from '@utils/abrv'
+	import { httpService } from '@utils/api'
 
 	interface anda_mo {
 		inicio: string
@@ -214,17 +210,42 @@
 
 	const all = ref<Array<anda_info>>([])
 
-	var ahora = dayjs('2023-12-01')
+	const buscar = async () => {
+		try {
+			var resultado = await httpService.post('/employ/adenda', { dni: datos.dni })
+			var res = resultado.data.resultado
+
+			datos.dni = res.dni
+			datos.area = res.area
+			datos.cargo = res.cargo
+			datos.direccion = res.direccion
+			datos.nombre = res.nombre
+			if (res.numero && res.numero != null) {
+				datos.contrato =
+					(res.numero as string).length >= 3
+						? `${(res.numero as string).slice(0, -2)}-${
+								parseInt((res.numero as string).slice(-2)) + 2000
+						  }-MVES`
+						: res.numero
+			}
+			datos.ruc = res.ruc
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	var ahora = dayjs().add(1, 'month')
 	const anda = ref(1)
 
 	const crea_anda = () => {
 		try {
 			all.value = []
 			var inicioad = dayjs(datos.info.inicio)
-			var finad = dayjs(datos.info.fin)
-			var fecha = finad
+			// var finad = dayjs(datos.info.fin)
+			var fecha = inicioad
+			anda.value = 1
 
-			var contador = true
+			var contador = false
 			while (fecha.isBefore(ahora) || fecha.isSame(ahora, 'month')) {
 				var anda_String: anda_mo = {
 					fin: '',
@@ -239,7 +260,7 @@
 				if (fecha.isAfter(dayjs('2019-09-27')) && fecha.isBefore(dayjs('2022-06-27'))) {
 					anda_String.resolucion = '262-2019-ALC-MVES'
 				} else if (
-					fecha.isAfter(dayjs('202-06-27')) &&
+					fecha.isAfter(dayjs('2022-06-27')) &&
 					fecha.isBefore(dayjs('2023-01-02'))
 				) {
 					anda_String.resolucion = '74-2022-ALC-MVES (e)'
@@ -260,6 +281,7 @@
 					)} DEL ${fecha.year()}`
 					anda_String.año = fecha.year()
 				} else {
+					anda.value = fecha.month() + 2
 					var mesnext = fecha.add(1, 'month')
 
 					if (mesnext.month() == 0) {
@@ -268,7 +290,7 @@
 						)} DEL ${mesnext.year()} HASTA EL ${fecha
 							.endOf('month')
 							.date()}  ${getMonthName(12)} DEL ${fecha.year()}`
-						anda.value = 1
+
 						anda_String.año = fecha.year() + 1
 					} else {
 						anda_String.inicio = `01  ${getMonthName(

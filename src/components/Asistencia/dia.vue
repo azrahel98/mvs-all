@@ -8,7 +8,7 @@
 			store.isloading ? 'skeleton-loader' : '',
 		]"
 	>
-		<h2 class="text-dark">{{ prop.dia }}</h2>
+		<h2 class="text-dark fs-3">{{ prop.dia }}</h2>
 		<div class="horas" v-if="!store.isloading && store.get_regis(prop.dia)">
 			<div>
 				<span class="status-dot bg-azure d-block text-center" />
@@ -60,7 +60,7 @@
 			class="d-flex justify-content-center pb-1"
 			v-if="!store.get_registro(dia)?.falta"
 		>
-			<div class="input-group text-center" v-if="ustore.level == 1">
+			<div class="input-group text-center" v-if="ustore.level <= 2">
 				<input
 					type="number"
 					class="form-control"
@@ -74,7 +74,7 @@
 		<context-menu
 			v-model:show="showmenu"
 			:options="(optionsComponent as MenuOptions)"
-			v-if="ustore.level == 1"
+			v-if="ustore.level <= 2"
 		>
 			<context-menu-item
 				@click="agregar_falta"
@@ -223,6 +223,7 @@
 			width: 1vh !important;
 			text-align: center;
 			font-size: 0.7rem;
+			height: 2.2vh;
 		}
 	}
 	.card {
@@ -238,7 +239,7 @@
 		row-gap: 0.1vh;
 		font-size: 0.75rem;
 		height: 100%;
-		min-height: 80px;
+		min-height: 65px;
 		h2,
 		p {
 			margin: 0;

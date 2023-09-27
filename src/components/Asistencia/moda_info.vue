@@ -32,7 +32,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="modal-footer d-flex justify-content-between">
+				<div class="modal-footer d-flex justify-content-between" v-if="ustore.level <= 2">
 					<button type="button" class="btn btn-sm" @click="eliminar">
 						<trash-icon class="text-danger" />
 					</button>
@@ -55,6 +55,7 @@
 
 <script lang="ts" setup>
 	import { calendarStore } from '@store/calendar'
+	import { userStore } from '@store/user'
 	import { httpService } from '@utils/api'
 	import { useToast } from 'vue-toastification'
 
@@ -64,6 +65,7 @@
 		ranged: { type: Boolean },
 	})
 
+	const ustore = userStore()
 	const toast = useToast()
 	const calStore = calendarStore()
 

@@ -35,7 +35,7 @@
 						></span>
 						<div class="d-none d-xl-block ps-2">
 							<div class="fs-5 fw-bold text-muted">{{ ustore.nombre }}</div>
-							<div class="mt-1 small text-muted">{{ ustore.level }}</div>
+							<div class="mt-1 small text-muted">{{ ustore.nombre_pref }}</div>
 						</div>
 					</a>
 					<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">

@@ -17,4 +17,19 @@ export const userStore = defineStore('userStore', {
 			this.nombre = tokendata.nombre
 		},
 	},
+	getters: {
+		nombre_pref(): string {
+			switch (this.level) {
+				case 1:
+					return 'Administrador'
+				case 2:
+					return 'Asistencia'
+				case 3:
+					return 'Visitante'
+
+				default:
+					return 'Desconocido'
+			}
+		},
+	},
 })

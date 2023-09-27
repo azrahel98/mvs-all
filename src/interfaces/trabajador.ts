@@ -12,6 +12,7 @@ interface Trabajador_Info {
 }
 
 interface Contrato_Info {
+	id:number
 	dni: string
 	numero: string | undefined
 	activo: string | undefined

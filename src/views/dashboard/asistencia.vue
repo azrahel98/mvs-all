@@ -11,7 +11,7 @@
 			<div class="c-flex dia">
 				<div class="main card col-lg-8 col-xl-7 col-xxl-4 col-md-10 col-sm-12">
 					<div class="calendar-tools">
-						<div class="d-flex">
+						<div class="d-flex align-items-center">
 							<div class="align-content-center justify-content-center flechas">
 								<button
 									class="btn btn-link text-dark ripple-surface-dark btn-icon"
@@ -27,13 +27,13 @@
 									<arrow-right-icon class="icon text-black" />
 								</button>
 							</div>
-							<span class="calendar-heading"
+							<span class="calendar-heading fs-3"
 								>{{ getMonthName(dateInfo.mes) }} {{ dateInfo.year }}</span
 							>
 						</div>
 						<div
 							class="d-flex justify-content-center align-self-center align-items-center gap-2 action-us"
-							v-if="ustore.level == 1"
+							v-if="ustore.level <= 2"
 						>
 							<button
 								class="btn btn-md btn-pill btn-ghost-facebook"
@@ -55,13 +55,13 @@
 					<div class="calendario">
 						<div class="card xd">
 							<div class="semana">
-								<div class="card">L</div>
-								<div class="card">M</div>
-								<div class="card">M</div>
-								<div class="card">J</div>
-								<div class="card">V</div>
-								<div class="card">S</div>
-								<div class="card">D</div>
+								<div class="card fs-4">L</div>
+								<div class="card fs-4">M</div>
+								<div class="card fs-4">M</div>
+								<div class="card fs-4">J</div>
+								<div class="card fs-4">V</div>
+								<div class="card fs-4">S</div>
+								<div class="card fs-4">D</div>
 							</div>
 							<div class="dias">
 								<div
@@ -242,6 +242,8 @@
 			width: 100%;
 			row-gap: 0.9vh;
 			grid-template-rows: auto;
+			align-items: center;
+
 			.main {
 				align-self: center;
 				justify-self: center;
@@ -262,7 +264,8 @@
 					}
 
 					.calendar-heading {
-						font-size: 1.8rem;
+						text-align: center;
+						vertical-align: middle;
 						font-weight: 700;
 						text-transform: capitalize;
 					}
@@ -292,8 +295,6 @@
 								text-align: center;
 								text-align: center;
 								vertical-align: inherit;
-								font-weight: bold;
-								font-size: 0.85rem;
 							}
 						}
 						.dias {

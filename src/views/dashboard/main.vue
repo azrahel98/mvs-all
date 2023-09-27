@@ -19,17 +19,6 @@
 						@keyup.enter="buscar"
 					/>
 				</div>
-				<!-- <div class="row">
-					<div class="col-auto ms-auto d-print-none">
-						<input
-							type="search"
-							class="form-control d-inline-block w-9 me-3"
-							placeholder="Pepito Perez"
-							v-model="nombre"
-							@keyup.enter="buscar"
-						/>
-					</div>
-				</div> -->
 			</div>
 		</div>
 		<div class="page-body">
@@ -97,6 +86,7 @@
 			padding: 10px;
 			border-radius: 50px;
 			outline: none;
+			height: 4vh;
 			background-color: #fff;
 			box-shadow: 0 0 1px rgba(143, 174, 231, 0.1);
 		}
